@@ -1,37 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Signup = () => {
-    const { isAuthenticated, message, isLoading, signup, clearMessage } = useAuth();
+    // const { isAuthenticated, message, isLoading, signup, clearMessage } = useAuth();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+   
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    // Redirect if already logged in
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate("/welcome");
-        }
-    }, [isAuthenticated]);
-
+    
     const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Limpia cualquier error previo
 
-    // Agrega validación para el username también, si aún no lo has hecho en las validaciones iniciales
-    if (!email || !username || !password || !confirmPassword) { // Asegúrate de que 'username' esté en tus estados de React
-        setError("Todos los campos son requeridos");
-        return;
-    }
+    // // Agrega validación para el username también, si aún no lo has hecho en las validaciones iniciales
+    // if (!email || !username || !password || !confirmPassword) { // Asegúrate de que 'username' esté en tus estados de React
+    //     setError("Todos los campos son requeridos");
+    //     return;
+    // }
 
-    if (password !== confirmPassword) {
-        setError("Las contraseñas no coinciden");
-        return;
-    }
+    // if (password !== confirmPassword) {
+    //     setError("Las contraseñas no coinciden");
+    //     return;
+    // }
 
     if (password.length < 6) {
         setError("La contraseña debe tener al menos 6 caracteres");
@@ -74,7 +68,7 @@ export const Signup = () => {
             <div className="auth-form">
                 <h2>Sign Up</h2>
 
-                {message && (
+                {/* {message && (
                     <div className="alert alert-info" role="alert">
                         {message}
                         <button
@@ -83,7 +77,7 @@ export const Signup = () => {
                             onClick={clearMessage}
                         />
                     </div>
-                )}
+                )} */}
 
                 {error && (
                     <div className="alert alert-danger" role="alert">
@@ -132,24 +126,14 @@ export const Signup = () => {
                         />
                     </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="confirmPassword"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
-                    </div>
+                    
 
                     <button
                         type="submit"
                         className="btn btn-primary w-100"
-                        disabled={isLoading}
+                        // disabled={isLoading}
                     >
-                        {isLoading ? "Loading..." : "Sign Up"}
+                        {/* {isLoading ? "Loading..." : "Sign Up"} */}
                     </button>
                 </form>
 

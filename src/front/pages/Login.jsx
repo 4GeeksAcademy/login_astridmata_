@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Login = () => {
-    const { isAuthenticated, message, login, clearMessage } = useAuth();
+    // const { isAuthenticated, message, login, clearMessage } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
     // Redirect if already logged in
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate("/welcome");
-        }
-    }, [isAuthenticated]);
+    // useEffect(() => {
+    //     if (isAuthenticated) {
+    //         navigate("/welcome");
+    //     }
+    // }, [isAuthenticated]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,7 +38,7 @@ export const Login = () => {
             <div className="auth-form">
                 <h2>Login</h2>
 
-                {message && (
+                {/* {message && (
                     <div className="alert alert-info" role="alert">
                         {message}
                         <button
@@ -47,7 +47,7 @@ export const Login = () => {
                             onClick={clearMessage}
                         />
                     </div>
-                )}
+                )} */}
 
                 {error && (
                     <div className="alert alert-danger" role="alert">
