@@ -75,7 +75,8 @@ def login():
         return jsonify({"message": "User account is not active"}), 401
 
     # Create access token
-    access_token = create_access_token(identity=user.id)
+    # access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
 
     return jsonify({
         "message": "Logged in successfully",
@@ -84,27 +85,56 @@ def login():
     }), 200
 
 
-@api.route('/user', methods=['GET'])
+# @api.route('/user', methods=['GET'])
+# @jwt_required()
+# def get_user():
+#     # Get the user's identity from the JWT
+#     current_user_id = get_jwt_identity()
+#     user = User.query.get(current_user_id)
+
+#     if not user:
+#         return jsonify({"message": "User not found"}), 404
+
+#     return jsonify(user.serialize()), 200
+
+
+# @api.route('/protected', methods=['GET'])
+# @jwt_required()
+# def protected():
+#     # Access the identity of the current user with get_jwt_identity
+#     current_user_id = get_jwt_identity()
+#     user = User.query.get(current_user_id)
+
+#     return jsonify({
+#         "message": f"Hello, {user.email}! This is a protected route.",
+#         "user_id": current_user_id
+#     }), 200
+
+
+# --- Nuevo Endpoint ---
+@api.route('/users', methods=['GET']) # Una ruta más genérica para colecciones
 @jwt_required()
-def get_user():
-    # Get the user's identity from the JWT
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+def get_all_users():
+    # Opcional: Puedes verificar si el usuario actual tiene permisos de administrador
+    # para acceder a esta ruta. Si no lo haces, CUALQUIER usuario con un token válido
+    # podrá ver la lista de todos los usuarios.
+    # Por ejemplo, si tu token incluye un 'role' o puedes consultar el rol del usuario:
+    # current_user_id = get_jwt_identity()
+    # current_user = User.query.get(current_user_id)
+    # if not current_user or current_user.role != 'admin':
+    #     return jsonify({"message": "Acceso denegado: Se requieren permisos de administrador"}), 403
 
-    if not user:
-        return jsonify({"message": "User not found"}), 404
 
-    return jsonify(user.serialize()), 200
+    # Obtener todos los usuarios de la base de datos
+    # Filtra por usuarios activos si lo necesitas, o quita el filtro para ver todos.
+    # users = User.query.filter_by(is_active=True).all()
+    users = User.query.all()
+    
+    if not users:
+        return jsonify({"message": "No hay usuarios registrados o activos."}), 404
 
+    # Serializar la lista de usuarios
+    # List comprehension para aplicar .serialize() a cada objeto User
+    serialized_users = [user.serialize() for user in users]
 
-@api.route('/protected', methods=['GET'])
-@jwt_required()
-def protected():
-    # Access the identity of the current user with get_jwt_identity
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-
-    return jsonify({
-        "message": f"Hello, {user.email}! This is a protected route.",
-        "user_id": current_user_id
-    }), 200
+    return jsonify(serialized_users), 200
