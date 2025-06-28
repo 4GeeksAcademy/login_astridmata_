@@ -6,6 +6,27 @@ export const Home = () => {
 
 	const { store, dispatch } = useGlobalReducer()
 
+
+	const uploadImage= async (e)=>{
+		console.log("subida");
+		console.log(e.target.files[0])
+		const formData = new FormData()
+
+		formData.append("image", e.target.files[0])
+		const response =await fetch(import.meta.env.VITE_BACKEND_URL+ "api/upload", {
+			method: "POST",
+			body: formData,
+			// header: {
+            //         "Content-Type": "multipart/formdata"
+            //     }
+			}
+		)
+
+		const data= await response.json()
+		console.log(data);
+		
+	}
+
 	const loadMessage = async () => {
 		try {
 			const backendUrl = import.meta.env.VITE_BACKEND_URL
@@ -35,6 +56,9 @@ export const Home = () => {
 	return (
 		<div className="text-center mt-5">
 			<h1 className="display-4">Hello Rigo!!</h1>
+
+		<input type="file" onChange={uploadImage} />
+
 			<p className="lead">
 				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
 			</p>

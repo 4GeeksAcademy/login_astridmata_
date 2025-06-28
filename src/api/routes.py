@@ -7,11 +7,36 @@ from api.utils import generate_sitemap, APIException
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_cors import CORS
+import os
+import cloudinary
+import cloudinary.uploader
 
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET")
+)
+
+
+@api.route('/upload', methods=['POST'])
+def update_image():
+
+    file = request.files["image"]
+    if not file:
+        return jsonify({"error": "the files is required"}), 400
+    
+    result=cloudinary.uploader.upload(file)
+
+    if "secure_url" not in result:
+        return jsonify({"error": "the image can not be uploaded"}), 400
+
+    return jsonify({"secure_url": result["secure_url"]}), 200
+
+
 
 
 @api.route('/hello', methods=['POST', 'GET'])
@@ -112,7 +137,7 @@ def login():
 
 
 # --- Nuevo Endpoint ---
-@api.route('/users', methods=['GET']) # Una ruta más genérica para colecciones
+@api.route('/users', methods=['GET'])  # Una ruta más genérica para colecciones
 @jwt_required()
 def get_all_users():
     # Opcional: Puedes verificar si el usuario actual tiene permisos de administrador
@@ -124,12 +149,11 @@ def get_all_users():
     # if not current_user or current_user.role != 'admin':
     #     return jsonify({"message": "Acceso denegado: Se requieren permisos de administrador"}), 403
 
-
     # Obtener todos los usuarios de la base de datos
     # Filtra por usuarios activos si lo necesitas, o quita el filtro para ver todos.
     # users = User.query.filter_by(is_active=True).all()
     users = User.query.all()
-    
+
     if not users:
         return jsonify({"message": "No hay usuarios registrados o activos."}), 404
 
